@@ -1,11 +1,10 @@
 'use client'
 
-import { Auth } from '@supabase/auth-ui-react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { Auth } from '@supabase/auth-ui-react'
 import { useSearchParams } from 'next/navigation'
-import { useState } from 'react'
-import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
 import { ThemeMinimal } from '@supabase/auth-ui-shared'
+import { useState } from 'react'
 
 export default function LoginPage() {
   const supabase = createClientComponentClient();

@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { Database } from '@/lib/database.types';
 
 export default async function Index() {
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const supabase = createServerComponentClient<Database>({ cookies: () => cookies() });
 
   const {
     data: { user },
