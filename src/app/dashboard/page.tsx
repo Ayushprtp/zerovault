@@ -2,11 +2,11 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Database } from '@/lib/database.types';
-import AdminDashboard from '@/src/components/AdminDashboard';
-import UserDashboard from '@/src/components/UserDashboard';
+import AdminDashboard from '@/components/AdminDashboard';
+import UserDashboard from '@/components/UserDashboard';
 
 export default async function DashboardPage() {
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const supabase = createServerComponentClient<Database>({ cookies: () => cookies() });
   const { data: { session } } = await supabase.auth.getSession();
 
   if (!session) {

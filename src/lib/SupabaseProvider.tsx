@@ -1,16 +1,26 @@
-"use client";
+'use client';
 
-import { createBrowserClient } from "@supabase/ssr";
-import { SessionProvider } from "next-auth/react";
-import { useState } from "react";
+import { createBrowserClient } from '@supabase/ssr';
+import { createContext, useContext, useState } from 'react';
+import type { Database } from '@/lib/database.types';
 
-import type { Database } from "@/lib/database.types";
+type SupabaseClient = ReturnType<typeof createBrowserClient<Database>>;
 
-export default function SupabaseProvider({
-  children,
-}: {
+const SupabaseContext = createContext<SupabaseClient | undefined>(undefined);
+
+export const useSupabase = () => {
+  const context = useContext(SupabaseContext);
+  if (context === undefined) {
+    throw new Error('useSupabase must be used within a SupabaseProvider');
+  }
+  return context;
+};
+
+interface SupabaseProviderProps {
   children: React.ReactNode;
-}) {
+}
+
+const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) => {
   const [supabase] = useState(() =>
     createBrowserClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -19,8 +29,10 @@ export default function SupabaseProvider({
   );
 
   return (
-    <SessionProvider>
+    <SupabaseContext.Provider value={supabase}>
       {children}
-    </SessionProvider>
+    </SupabaseContext.Provider>
   );
-}
+};
+
+export default SupabaseProvider;

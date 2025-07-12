@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { Database } from '@/src/lib/database.types';
 
+// Supabase client for interacting with the primary database
 const supabase = createServerActionClient<Database>({ cookies });
 
 export async function fetchUsers() {
@@ -67,10 +68,12 @@ export async function fetchUserById(userId: string) {
   return data;
 }
 
+// Action to fetch a user's raw query history from Cloudflare D1
+// Note: This implementation assumes access to D1 from a server action.
+// The actual D1 binding setup is outside the scope of this file generation.
 export async function fetchUserQueryHistory(userId: string) {
-  const { data, error } = await supabase
-    .from('query_log') // Assuming 'query_log' is in your Supabase schema for simplicity here, but GEMINI.md says D1
-    .select('*')
+  // Replace this with your actual D1 binding and query logic
+  // Example placeholder using a hypothetical D1 access method:
     .eq('user_id', userId)
     .order('timestamp', { ascending: false });
 

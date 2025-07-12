@@ -1,5 +1,106 @@
 'use client';
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { updateSiteSettings } from '@/src/app/dashboard/settings/site/actions';
+
+interface SiteSettingsFormProps {
+  initialSettings: { key: string; value: string }[];
+}
+
+export default function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
+  const router = useRouter();
+  const [settings, setSettings] = useState(
+    initialSettings.reduce((acc, setting) => {
+      acc[setting.key] = setting.value;
+      return acc;
+    }, {} as Record<string, string>)
+  );
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setSettings((prevSettings) => ({
+      ...prevSettings,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('');
+
+    const updates = Object.keys(settings).map(key => ({
+        key,
+        value: settings[key]
+    }));
+
+    const result = await updateSiteSettings(updates);
+
+    if (result.success) {
+      setMessage('Settings updated successfully!');
+    } else {
+      setMessage(`Error updating settings: ${result.error}`);
+    }
+    setLoading(false);
+    router.refresh(); // Refresh to show potential updates
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-md">
+      <div>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-4">Site Customization</h2>
+        <p className="text-sm text-gray-500">Manage public-facing site text and links.</p>
+      </div>
+
+      {/* Example field: Site Title */}
+      <div>
+        <label htmlFor="site_title" className="block text-sm font-medium text-gray-700">
+          Site Title
+        </label>
+        <input
+          type="text"
+          name="site_title"
+          id="site_title"
+          value={settings.site_title || ''}
+          onChange={handleChange}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
+
+       {/* Example field: Admin Telegram Username */}
+      <div>
+        <label htmlFor="admin_telegram_username" className="block text-sm font-medium text-gray-700">
+          Admin Telegram Username
+        </label>
+        <input
+          type="text"
+          name="admin_telegram_username"
+          id="admin_telegram_username"
+          value={settings.admin_telegram_username || ''}
+          onChange={handleChange}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
+
+      {/* Add more setting fields as needed */}
+
+      {message && <p className={`text-sm ${message.includes('Error') ? 'text-red-500' : 'text-green-600'}`}>{message}</p>}
+
+      <button
+        type="submit"
+        className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+        disabled={loading}
+      >
+        {loading ? 'Saving...' : 'Save Settings'}
+      </button>
+    </form>
+  );
+}
+'use client';
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { updateTicketStatus, addTicketReply } from '@/src/app/dashboard/support/actions';

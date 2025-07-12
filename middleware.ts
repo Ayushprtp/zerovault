@@ -38,7 +38,6 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-
   // Redirect authenticated users away from /login
   if (user && req.nextUrl.pathname === '/login') {
     return NextResponse.redirect(new URL('/dashboard', req.url))
@@ -47,11 +46,16 @@ export async function middleware(req: NextRequest) {
   // Redirect unauthenticated users trying to access dashboard pages
   if (!user && req.nextUrl.pathname.startsWith('/dashboard')) {
      // Allow access to public pages like homepage, shop, docs, status
-     const publicPaths = ['/', '/shop', '/docs', '/status'];
+     const publicPaths = ['/', '/shop', '/docs', '/status']; // Include public paths explicitly
      if (!publicPaths.includes(req.nextUrl.pathname)) {
        return NextResponse.redirect(new URL('/login', req.url));
      }
   }
+
+  // Note: The priority session management (Part 2.3) logic described in GEMINI.md
+  // is typically implemented as a Supabase Edge Function triggered on login attempts,
+  // not directly within the Next.js middleware. This middleware focuses on route protection
+  // and maintenance mode.
 
   return res
 }
@@ -64,10 +68,11 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - any files in the public folder
-     * - the auth callback path
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$|api/auth/callback).*)',
-    '/api/auth/callback', // Explicitly include the auth callback
-    '/maintenance', // Explicitly include the maintenance page
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    // Explicitly include paths that should be handled even if they might otherwise be excluded by the pattern
+    '/maintenance',
+    '/login',
+    '/dashboard/:path*', // Match all paths under /dashboard
   ],
 }

@@ -1,7 +1,7 @@
-import { createClient } from '@/utils/supabase/server';
-import { UserDashboardLayout } from '@/components/UserDashboardLayout';
+import { createClient } from '@/lib/supabase/server';
+import UserDashboardLayout from '@/components/UserDashboardLayout';
 import { redirect } from 'next/navigation';
-
+ 
 export default async function ReferralsPage() {
   const supabase = createClient();
 
