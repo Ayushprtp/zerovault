@@ -38,20 +38,6 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // Redirect authenticated users away from /login
-  if (user && req.nextUrl.pathname === '/login') {
-    return NextResponse.redirect(new URL('/dashboard', req.url))
-  }
-
-  // Redirect unauthenticated users trying to access dashboard pages
-  if (!user && req.nextUrl.pathname.startsWith('/dashboard')) {
-     // Allow access to public pages like homepage, shop, docs, status
-     const publicPaths = ['/', '/shop', '/docs', '/status']; // Include public paths explicitly
-     if (!publicPaths.includes(req.nextUrl.pathname)) {
-       return NextResponse.redirect(new URL('/login', req.url));
-     }
-  }
-
   // Note: The priority session management (Part 2.3) logic described in GEMINI.md
   // is typically implemented as a Supabase Edge Function triggered on login attempts,
   // not directly within the Next.js middleware. This middleware focuses on route protection

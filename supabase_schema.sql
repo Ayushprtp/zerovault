@@ -13,7 +13,6 @@ CREATE TABLE profiles (
     zero_coins BIGINT NOT NULL DEFAULT 5,
     referral_code TEXT UNIQUE,
     referred_by UUID REFERENCES profiles(id),
-    active_session_id TEXT,
     dashboard_layout JSONB,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     CONSTRAINT username_length CHECK (char_length(username) >= 3)

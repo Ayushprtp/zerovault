@@ -3,6 +3,7 @@
 import { createBrowserClient } from '@supabase/ssr';
 import { createContext, useContext, useState } from 'react';
 import type { Database } from '@/lib/database.types';
+import type { Session } from '@supabase/supabase-js';
 
 type SupabaseClient = ReturnType<typeof createBrowserClient<Database>>;
 

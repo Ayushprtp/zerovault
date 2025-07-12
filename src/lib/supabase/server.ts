@@ -1,7 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 
-export const createClient = () => {
+export const createClient = () => { // Renamed from `createServerComponentClient` to `createClient`
   const cookieStore = cookies();
 
   return createServerClient(
